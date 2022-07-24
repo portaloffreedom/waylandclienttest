@@ -1,0 +1,3 @@
+build/
+cmake-build-*/
+.kdev4/
