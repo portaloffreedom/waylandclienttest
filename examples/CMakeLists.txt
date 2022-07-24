@@ -1,7 +1,7 @@
 
 
 add_executable(waylandclient_c_tutorial
-    "${CMAKE_BINARY_DIR}/xdg-shell-protocol.c"
+    "${CMAKE_BINARY_DIR}/xdg-shell.c"
     damage.c
 )
 target_include_directories(waylandclient_c_tutorial

@@ -2,12 +2,14 @@
 #include <cstring>
 #include <wayland-client.h>
 #include <wayland-egl.h>
-#include "xdg-shell-client-protocol.h"
 #include "wl/display.h"
 #include "xdg/surface.h"
 #include "wl/sharedmemory.h"
 #include "wl/buffer.h"
 #include "myegl/egl.h"
+#include "xdg-shell.h"
+#include "xdg-decoration-unstable-v1.h"
+#include "xdg/unstable/topleveldecoration.h"
 
 int main(int argc, char **argv)
 {
@@ -31,6 +33,11 @@ int main(int argc, char **argv)
         XDG::TopLevel toplevel = xdg_surface.get_toplevel();
         toplevel.set_title("Test Wayland window");
         toplevel.on_close = [&] (const XDG::TopLevel& o) { running = false; };
+
+        ZXDG::DecorationManager decorator_manager = registry.bind_decoration_manager();
+
+        ZXDG::TopLevelDecoration toplevel_decoration = decorator_manager.get_toplevel_decoration(toplevel);
+        toplevel_decoration.set_mode(ZXDG::TopLevelDecoration::ServerSide);
 
 //     } else if (registry.has("wl_shell")) {
 //         std::cout << "Found XDG wayland shell [DEPRECATED]" << std::endl;

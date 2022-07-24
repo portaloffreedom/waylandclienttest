@@ -1,6 +1,6 @@
 #include "toplevel.h"
 
-#include "xdg-shell-client-protocol.h"
+#include "xdg-shell.h"
 
 using namespace XDG;
 

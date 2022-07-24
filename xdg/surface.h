@@ -1,7 +1,7 @@
 #ifndef XDG_SURFACE_H
 #define XDG_SURFACE_H
 
-#include "xdg-shell-client-protocol.h"
+#include "xdg-shell.h"
 #include "xdg/toplevel.h"
 
 namespace XDG {

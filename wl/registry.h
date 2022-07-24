@@ -8,6 +8,7 @@
 #include "shell.h"
 #include "xdg/wmbase.h"
 #include "wl_exception.h"
+#include "xdg/unstable/decorationmanager.h"
 
 namespace wl {
 
@@ -28,6 +29,7 @@ public:
     wl::Shell bind_shell();
     wl::SharedMemory bind_shm();
     XDG::WMBase bind_xdg_wm_base();
+    ZXDG::DecorationManager bind_decoration_manager();
 
     template<typename T>
     T* bind(const char* interface_name, const struct wl_interface *interface, uint32_t version = -1)

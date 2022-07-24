@@ -45,6 +45,7 @@ void wl::Registry::destroy()
 
 void wl::Registry::event_add(uint32_t id, const char* interface, uint32_t version)
 {
+    std::cout << "Registry has " << interface << std::endl;
     registry_map[interface] = std::make_pair(id, version);
 }
 
@@ -83,4 +84,10 @@ wl::SharedMemory wl::Registry::bind_shm()
     return wl::SharedMemory(raw);
 }
 
+ZXDG::DecorationManager wl::Registry::bind_decoration_manager()
+{
+    zxdg_decoration_manager_v1 *raw = this->bind<zxdg_decoration_manager_v1>(
+        "zxdg_decoration_manager_v1", &zxdg_decoration_manager_v1_interface);
+    return ZXDG::DecorationManager(raw);
+}
 

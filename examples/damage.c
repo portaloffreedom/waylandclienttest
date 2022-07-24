@@ -1,6 +1,6 @@
 // FROM https://jan.newmarch.name/Wayland/WhenCanIDraw/
 
-#include "xdg-shell-client-protocol.h"
+#include "xdg-shell.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>

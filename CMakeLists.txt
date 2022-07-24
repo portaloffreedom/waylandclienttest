@@ -17,20 +17,35 @@ pkg_check_modules(EGL REQUIRED egl)
 pkg_get_variable(WAYLAND_SCANNER_BIN wayland-scanner wayland_scanner)
 pkg_get_variable(WAYLAND_PROTOCOLS_DATADIR wayland-protocols pkgdatadir)
 
-# GENERATE XDG PROTOCOLS SOURCES
-add_custom_command(COMMAND ${WAYLAND_SCANNER_BIN} 
-    ARGS private-code "${WAYLAND_PROTOCOLS_DATADIR}/stable/xdg-shell/xdg-shell.xml" "${CMAKE_CURRENT_BINARY_DIR}/xdg-shell-protocol.c"
-    DEPENDS "${WAYLAND_PROTOCOLS_DATADIR}/stable/xdg-shell/xdg-shell.xml"
-    OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/xdg-shell-protocol.c"
-    COMMENT "Generating xdg protocol private code."
-    )
+function(GENERATE_XDG_PROTOCOLS Name)
+    # GENERATE XDG PROTOCOLS SOURCES
+    set(XDG_PROTOCOLS_SOURCES)
+    set(XDG_PROTOCOLS_HEADERS)
+    foreach(XML ${ARGN})
+        get_filename_component(XML_NAME "${XML}" NAME_WE)
+        MESSAGE("Generating C source code for ${XML} -> ${XML_NAME}")
+        add_custom_command(COMMAND ${WAYLAND_SCANNER_BIN}
+            ARGS private-code "${XML}" "${CMAKE_CURRENT_BINARY_DIR}/${XML_NAME}.c"
+            DEPENDS "${XML}"
+            OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/${XML_NAME}.c"
+            COMMENT "Generating \"${XML_NAME}\" protocol private code."
+            )
+        list(APPEND XDG_PROTOCOLS_SOURCES "${CMAKE_CURRENT_BINARY_DIR}/${XML_NAME}.c")
 
-add_custom_command(COMMAND ${WAYLAND_SCANNER_BIN}
-    ARGS client-header "${WAYLAND_PROTOCOLS_DATADIR}/stable/xdg-shell/xdg-shell.xml" "${CMAKE_CURRENT_BINARY_DIR}/xdg-shell-client-protocol.h"
-    DEPENDS "${WAYLAND_PROTOCOLS_DATADIR}/stable/xdg-shell/xdg-shell.xml"
-    OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/xdg-shell-client-protocol.h"
-    COMMENT "Generating xdg protocol header."
-    )
+        add_custom_command(COMMAND ${WAYLAND_SCANNER_BIN}
+            ARGS client-header "${XML}" "${CMAKE_CURRENT_BINARY_DIR}/${XML_NAME}.h"
+            DEPENDS "${XML}"
+            OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/${XML_NAME}.h"
+            COMMENT "Generating \"${XML_NAME}\" protocol header."
+            )
+        list(APPEND XDG_PROTOCOLS_HEADERS "${CMAKE_CURRENT_BINARY_DIR}/${XML_NAME}.h")
+    endforeach()
+endfunction()
+
+GENERATE_XDG_PROTOCOLS( Ciao
+    "${WAYLAND_PROTOCOLS_DATADIR}/stable/xdg-shell/xdg-shell.xml"
+    "${WAYLAND_PROTOCOLS_DATADIR}/unstable/xdg-decoration/xdg-decoration-unstable-v1.xml"
+)
 
 # Main code
 add_executable(waylandclient
@@ -47,10 +62,14 @@ add_executable(waylandclient
     xdg/wmbase.cpp xdg/wmbase.h
     xdg/surface.cpp xdg/surface.h
     xdg/toplevel.cpp xdg/toplevel.h
+    xdg/unstable/decorationmanager.cpp xdg/unstable/decorationmanager.h
+    xdg/unstable/topleveldecoration.cpp xdg/unstable/topleveldecoration.h
     myegl/egl.cpp myegl/egl.h
     myegl/eglwindow.cpp myegl/eglwindow.h
-    "${CMAKE_CURRENT_BINARY_DIR}/xdg-shell-protocol.c"
-    xdg-shell-client-protocol.h)
+    "${CMAKE_CURRENT_BINARY_DIR}/xdg-shell.c"
+    "${CMAKE_CURRENT_BINARY_DIR}/xdg-shell.h"
+    "${CMAKE_CURRENT_BINARY_DIR}/xdg-decoration-unstable-v1.c"
+    "${CMAKE_CURRENT_BINARY_DIR}/xdg-decoration-unstable-v1.h")
 
 target_include_directories(waylandclient
     PRIVATE ${WAYLAND_CLIENT_INCLUDE_DIRS}

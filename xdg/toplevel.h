@@ -1,7 +1,7 @@
 #ifndef XDG_TOPLEVEL_H
 #define XDG_TOPLEVEL_H
 
-#include "xdg-shell-client-protocol.h"
+#include "xdg-shell.h"
 #include <functional>
 
 namespace XDG {
@@ -24,6 +24,8 @@ public:
     void _configure_bounds(int32_t width, int32_t height);
 
     std::function<void(const TopLevel&)> on_close;
+
+    xdg_toplevel* operator*() { return raw; }
 
 private:
     TopLevel(xdg_toplevel *raw);

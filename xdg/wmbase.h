@@ -1,7 +1,7 @@
 #ifndef XDG_WMBASE_H
 #define XDG_WMBASE_H
 
-#include "xdg-shell-client-protocol.h"
+#include "xdg-shell.h"
 #include "wl/surface.h"
 
 namespace wl {
