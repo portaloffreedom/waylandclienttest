@@ -35,10 +35,6 @@ Surface::Surface(wl_surface* raw_surface)
     listener.leave = &_static_on_leave;
     frame_listener.done = &_static_on_redraw;
     wl_surface_add_listener(raw_surface, &listener, this);
-
-    std::cout << "listener.enter=" << (void*)listener.enter << std::endl;
-    std::cout << "listener.leave=" << (void*)listener.leave << std::endl;
-    std::cout << "frame_listener.done=" << (void*)frame_listener.done << std::endl;
 }
 
 Surface::~Surface()
